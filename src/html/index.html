@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="./assets/style.css">
+    <!-- CSS END -->
+
+    
+
+    <title>TaskTracker</title>
+</head>
+<body>
+    <main class="container">
+        <div class="text-center text-danger">
+            <h1 class="py-5">TaskTracker</h1>
+        </div>
+        <section class="d-flex justify-content-center">
+            <form id="addTask">
+                <input type="text" name="addtask" id="addtask" placeholder="Add a task..." />
+            </form>
+        </section>
+        <div id="task-container" class="container my-5">
+            <ul class="form-check" id="taskList"></ul>
+        </div>
+        
+    </main>
+    <script src="./assets/index.js"></script>
+</body>
+</html>

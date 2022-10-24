@@ -1,0 +1,15 @@
+body {
+    font-family: 'Dancing Script', cursive !important;
+    min-width: 500px !important;
+    width: auto !important;
+}
+
+#task-container{
+    width: 75vw !important;
+    border: 1px solid red !important;
+    border-radius: 5px;
+}
+
+#taskList{
+    list-style-type:none !important;
+}

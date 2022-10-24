@@ -1,0 +1,20 @@
+{
+  "name": "tasktracker",
+  "version": "1.0.0",
+  "description": "intuitive task tracker",
+  "main": "index.js",
+  "scripts": {
+    "build": "npx gulp",
+    "dev": "npx gulp watch"
+  },
+  "author": "aashish",
+  "license": "ISC",
+  "dependencies": {
+  },
+  "devDependencies": {
+    "gulp": "^4.0.2",
+    "gulp-htmlmin": "^5.0.1",
+    "gulp-sourcemaps": "^3.0.0",
+    "gulp-terser": "^2.1.0"
+  }
+}
