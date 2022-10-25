@@ -1,4 +1,5 @@
-import { Task } from "./Task";
+import { Task } from "../Task";
+import { taskListStorage } from "./constants";
 
 export function storageAvailable(type) {
     /**
@@ -29,9 +30,9 @@ export function getTaskList() {
      * If the localStorage has the tasklist, fetch all the tasks from it and display on the UI
      */
 
-    const taskList = window.localStorage.getItem('task-list');
-    if(taskList){
-        const taskArr = Array.from(taskList.split(','));
+    
+    if(taskListStorage){
+        const taskArr = Array.from(taskListStorage.split(','));
         
         for (const item in taskArr) {
             const task = JSON.parse(window.localStorage.getItem(taskArr[item]));
