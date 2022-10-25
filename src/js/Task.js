@@ -1,16 +1,16 @@
 export class Task {
-    constructor( taskId, taskListId ) {
+    constructor( taskId, taskText = undefined ) {
 
         this.taskId = taskId;
-        this.taskListId = `tasks_${taskListId}`;
         this.lastModified = new Date();
-
+        this.taskText = taskText;
     }
     storeTask(taskText) {
         /**
          * Add a new task to the localStorage
          */
         const createdAt = new Date();
+        this.taskText = taskText;
 
         const taskObject = {
             task: taskText,
@@ -20,15 +20,17 @@ export class Task {
             status: 'new'
         };
 
-        const currentTaskList = window.localStorage.getItem(this.taskListId);
-
-        if (currentTaskList){
-            // Add to existing task list
-            currentTaskList.push(taskObject);
+        let taskList = window.localStorage.getItem('task-list');
+        if (taskList){
+            taskList += `,${this.taskId}`;
         }else{
-            // Create new task list
-            window.localStorage.setItem(this.taskListId,[taskObject])
+            taskList = this.taskId;
         }
+        window.localStorage.setItem('task-list', taskList);
+        console.log('task list set to',taskList);
+
+        window.localStorage.setItem(this.taskId,JSON.stringify(taskObject));
+        return;
 
     }
 
@@ -43,7 +45,15 @@ export class Task {
         /**
          * create an HTML element that will be appended to the task list UI
          */
-        return false;
+        const taskList = document.getElementById('taskList');
+        const taskBox = document.createElement('li');
+        taskBox.innerHTML = `
+        <input class="form-check-input" type="checkbox" value="" id="${this.taskId}">
+        <label class="form-check-label" for="${this.taskId}">
+            ${this.taskText}
+        </label>`;
+        taskList.appendChild(taskBox);
+        return;
     }
 
     changeStatus() {
@@ -57,7 +67,7 @@ export class Task {
         /**
          * Fetch the current task from localStorage
          */
-        return false;
+        return JSON.parse(window.localStorage.getItem(this.taskId));
     }
 
     get_taskId(){

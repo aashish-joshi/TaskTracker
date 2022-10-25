@@ -1,3 +1,5 @@
+import { Task } from "./Task";
+
 export function storageAvailable(type) {
     /**
      * Check if localstorage is available for use.
@@ -19,5 +21,24 @@ export function storageAvailable(type) {
             e.name === 'QuotaExceededError' ||
             e.name === 'NS_ERROR_DOM_QUOTA_REACHED') &&
             (storage && storage.length !== 0);
+    }
+}
+
+export function getTaskList() {
+    /**
+     * If the localStorage has the tasklist, fetch all the tasks from it and display on the UI
+     */
+
+    const taskList = window.localStorage.getItem('task-list');
+    if(taskList){
+        const taskArr = Array.from(taskList.split(','));
+        console.log(taskArr);
+        for (const item in taskArr) {
+            const task = JSON.parse(window.localStorage.getItem(taskArr[item]));
+            const taskItem = new Task(task.taskId, task.task);
+            taskItem.createNode();
+        }
+    }else{
+        console.log('No pending tasks');
     }
 }

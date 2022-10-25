@@ -1,7 +1,8 @@
 const { src, parallel, dest, watch }  = require('gulp');
-const sourcemaps = require('gulp-sourcemaps');
+// const sourcemaps = require('gulp-sourcemaps');
 const htmlmin = require('gulp-htmlmin');
-const terser = require('gulp-terser');
+// const terser = require('gulp-terser');
+// const concat = require('gulp-concat');
 
 // File Paths
 
@@ -9,8 +10,8 @@ const cssInPath = 'src/css/**.css';
 const cssOutPath = 'public/assets';
 const htmlInPath = 'src/html/**.html';
 const htmlOutPath = 'public';
-const jsInPath = 'src/js/**/**.js';
-const jsOutPath = 'public/assets';
+// const jsInPath = 'src/js/**/**.js';
+// const jsOutPath = 'public/assets';
 
 // Functions
 
@@ -25,21 +26,22 @@ function copyHtml() {
     .pipe(dest(htmlOutPath));
 }
 
-function copyJs () {
-    return src(jsInPath)
-    .pipe(sourcemaps.init())
-        .pipe(terser())
-    .pipe(sourcemaps.write())
-    .pipe(dest(jsOutPath))
-}
+// function copyJs () {
+//     return src(jsInPath)
+//     .pipe(concat('index.js'))
+//     .pipe(sourcemaps.init())
+//         .pipe(terser())
+//     .pipe(sourcemaps.write())
+//     .pipe(dest(jsOutPath))
+// }
 
 function watchFiles() {
     watch(cssInPath,copyCss);
     watch(htmlInPath,copyHtml);
-    watch(jsInPath,copyJs);
+    // watch(jsInPath,copyJs);
 }
 
 // Exports
 
-exports.default = parallel(copyCss, copyHtml, copyJs);
+exports.default = parallel(copyCss, copyHtml);
 exports.watch = watchFiles;
