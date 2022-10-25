@@ -48,8 +48,8 @@ export class Task {
         const taskList = document.getElementById('taskList');
         const taskBox = document.createElement('li');
         taskBox.innerHTML = `
-        <input class="form-check-input" type="checkbox" value="" id="${this.taskId}">
-        <label class="form-check-label" for="${this.taskId}">
+        <input class="form-check-input" type="checkbox" value="" id="${this.taskId}" onclick=markdone(this.id)>
+        <label class="form-check-label" for="${this.taskId}" id="task-${this.taskId}">
             ${this.taskText}
         </label>`;
         taskList.appendChild(taskBox);
