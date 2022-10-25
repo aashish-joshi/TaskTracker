@@ -13,3 +13,8 @@ body {
 #taskList{
     list-style-type:none !important;
 }
+
+.strike {
+    text-decoration: line-through !important;
+    color: darkgray !important;
+}
