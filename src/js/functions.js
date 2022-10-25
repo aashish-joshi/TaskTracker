@@ -32,7 +32,7 @@ export function getTaskList() {
     const taskList = window.localStorage.getItem('task-list');
     if(taskList){
         const taskArr = Array.from(taskList.split(','));
-        console.log(taskArr);
+        
         for (const item in taskArr) {
             const task = JSON.parse(window.localStorage.getItem(taskArr[item]));
             const taskItem = new Task(task.taskId, task.task);
