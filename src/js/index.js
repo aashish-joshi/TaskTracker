@@ -1,8 +1,8 @@
-import {storageAvailable, getTaskList} from './functions.js';
+import {storageAvailable, getTaskList} from './Common/functions.js';
 import {Task} from './Task.js';
 import {v4 as uuidv4} from 'uuid';
+import { VERSION, taskForm } from './Common/constants.js';
 
-const VERSION = 1.0;
 console.info(`TaskTracker version ${VERSION}`);
 
 window.addEventListener('load', () => {
@@ -17,8 +17,6 @@ window.addEventListener('load', () => {
         errMsg.classList.add("text-danger");
         return;
     }
-
-    const taskForm = document.getElementById('addTask');
 
     taskForm.addEventListener('submit', (e) => {
         e.preventDefault();
