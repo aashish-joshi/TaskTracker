@@ -1,6 +1,6 @@
-# TaskTracker
+# TaskTracker API
 
-A simple and intuitive task tracker app that also works offline
+A simple task tracker API.
 
 ## Functions
 1. Add new task
@@ -21,4 +21,3 @@ List of API endpoints. All of these exist at `{hostname}/api/{endpoint}`
 | `/auth/token` | `POST` | Generate a token |
 | `/auth/signup` | `POST` | Sign up for a new account |
 | `/auth/signout` | `POST` | Invalidate issued tokens |
-
