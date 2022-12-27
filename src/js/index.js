@@ -32,6 +32,11 @@ window.addEventListener('load', () => {
         taskForm.reset();
         return false;
     })
+
+    function markdone(id){
+        const elem = document.getElementById(`task-${id}`);
+        elem.classList.toggle('strike');
+    }
     
 
 })
