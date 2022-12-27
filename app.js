@@ -14,6 +14,7 @@ const port = process.env.PORT || 3000;
 
 app.use(morgan('dev'));
 app.use(Express.json());
+mongoose.set('strictQuery', false);
 
 // Configure routes
 app.get('/', (req, res) => {
