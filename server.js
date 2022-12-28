@@ -6,7 +6,7 @@ import mongoose from 'mongoose';
 import morgan from 'morgan';
 
 // Routes
-import { router as taskRouter } from './routes/task.js';
+import { router as taskRouter } from './routes/taskRoutes.js';
 
 // Main API app
 const app = Express();
