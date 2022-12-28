@@ -2,11 +2,11 @@
   "name": "tasktracker",
   "version": "1.0.0",
   "description": "intuitive task tracker",
-  "main": "index.js",
+  "main": "server.js",
   "type": "module",
   "scripts": {
-    "start": "node app.js",
-    "dev": "nodemon app.js"
+    "start": "node server.js",
+    "dev": "npx nodemon server.js"
   },
   "author": "aashish",
   "license": "ISC",
