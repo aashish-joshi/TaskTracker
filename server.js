@@ -7,6 +7,7 @@ import morgan from 'morgan';
 
 // Routes
 import { router as taskRouter } from './routes/taskRoutes.js';
+import { router as authRouter } from './routes/authRoutes.js';
 
 // Main API app
 const app = Express();
@@ -22,6 +23,7 @@ app.get('/', (req, res) => {
 })
 
 app.use('/task', taskRouter);
+app.use('/auth', authRouter);
 
 // Connect to DB and start server
 mongoose.connect(process.env.MONGO_URI, {dbName: 'tasks'})

@@ -1,5 +1,9 @@
 import Express from "express";
 const router = Express.Router();
 
-router.post('/signup', );
-router.post('/token', );
+import { AuthController } from '../controller/authController.js';
+
+router.post('/signup', AuthController.signup);
+router.post('/token', AuthController.get_token);
+
+export { router };
