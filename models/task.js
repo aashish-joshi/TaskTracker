@@ -1,10 +1,11 @@
+import { ObjectID } from "bson";
 import mongoose from "mongoose";
 const { Schema } = mongoose;
 
 const taskSchema = new Schema(
 	{
 		userId: {
-			type: String,
+			type: ObjectID,
 			required: true,
 		},
 		name: {
