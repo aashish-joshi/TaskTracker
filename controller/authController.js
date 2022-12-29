@@ -3,7 +3,7 @@ dotenv.config()
 
 import jwt from 'jsonwebtoken';
 import { User } from '../models/user.js';
-import { isEmail, hashPassword, matchPassword } from '../common/functions.js';
+import { isEmail, hashPassword, sendJsonResponse, matchPassword } from '../common/functions.js';
 
 class AuthController{
     static signup = async (req, res, next) => {
@@ -11,31 +11,17 @@ class AuthController{
         const { fname, lname, email, password } = req.body;
 
         if(!fname || !lname || !email || !password ){
-            return res.status(400).json({
-                status: "failed",
-                data: "",
-                message: "missing data in request body"
-            });
-            
+            return sendJsonResponse(req, res, next, 400, "", "missing data in request body");
         }
 
         if(!isEmail(email) ) {
-            return res.status(400).json({
-                status: "failed",
-                data: "",
-                message: `'${email}' is not a valid email address.`
-            });
-            
+            return sendJsonResponse(req, res, next, 400, "", `'${email}' is not a valid email address`);
         }
 
         const existingUser = await User.findOne({ email: email});
+
         if(existingUser){
-            return res.status(400).json({
-                status: "failed",
-                data: "",
-                message: `User already exists with email '${email}'`
-            });
-            
+          return sendJsonResponse(req, res, next, 400, "", `User already exists with email '${email}'`);
         }
 
         const hashedPassword = await hashPassword(password);
@@ -48,11 +34,7 @@ class AuthController{
         })
 
         if(result){
-            return res.status(201).json({
-                status: "success",
-                data: result,
-                message: "signup complete"
-            });
+          return sendJsonResponse(req, res, next, 201, result, "signup complete");
         }
 
     }
@@ -68,12 +50,7 @@ class AuthController{
         // If password matches, send JWT token.
 
         if( !email || !password ){
-            return res.status(400).json({
-                status: "failed",
-                data: "",
-                message: "missing data in request body"
-            });
-            
+            return sendJsonResponse(req, res, next, 400, "", "missing data in request body");
         }
         try {
             const existingUser = await User.findOne({ email: email});
