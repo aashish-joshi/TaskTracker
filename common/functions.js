@@ -10,5 +10,9 @@ export function isEmail(email) {
     return false;
 }
 export async function hashPassword(password) {
-    return bcrypt.hash(password, Number(process.env.SALT_ROUND))
+    return await bcrypt.hash(password, Number(process.env.SALT_ROUND))
+}
+
+export async function matchPassword(hashed, plain) {
+    return await bcrypt.compare(plain, hashed);
 }
