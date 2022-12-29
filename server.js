@@ -15,7 +15,7 @@ import { router as authRouter } from './routes/authRoutes.js';
 const app = Express();
 const port = process.env.PORT || 3000;
 
-
+app.disable('x-powered-by');
 
 app.use(morgan('dev'));
 app.use(Express.json());
