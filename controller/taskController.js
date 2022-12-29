@@ -3,7 +3,10 @@ import { sendJsonResponse } from "../common/functions.js";
 
 class TaskController {
 	static get_all_tasks = (req, res, next) => {
-		Task.find()
+
+		const { sub, email } = req.auth;
+
+		Task.find( {"userId": sub} )
 			.select("_id userId name body status createdAt")
 			.sort({ createdAt: -1 })
 			.then((result) => {
@@ -16,7 +19,7 @@ class TaskController {
 	};
 	
 	static get_one_task = (req, res, next) => {
-		Task.findById(req.params.id, "userId name body status createdAt")
+		Task.findById(req.params.id, "_id userId name body status createdAt")
 			.then((result) => {
 				return sendJsonResponse( req, res, next, 200, result, "task" );
 			})
