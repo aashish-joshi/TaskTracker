@@ -32,6 +32,19 @@ app.use('/tasks', (req, res) => {
 })
 app.use('/auth', authRouter);
 
+// Error handling
+app.use(function (err, req, res, next) {
+  if (err.name === "UnauthorizedError") {
+    res.status(401).json({
+      status: "failed",
+      data:"",
+      message: "invalid token"
+    });
+  } else {
+    next(err);
+  }
+});
+
 // Connect to DB and start server
 mongoose.connect(process.env.MONGO_URI, {dbName: 'tasks'})
 .then(() => {
