@@ -27,6 +27,9 @@ app.get('/', (req, res, next) => {
 })
 
 app.use('/task', taskRouter);
+app.use('/tasks', (req, res) => {
+  res.redirect(301, '/task');
+})
 app.use('/auth', authRouter);
 
 // Connect to DB and start server
