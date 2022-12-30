@@ -1,4 +1,5 @@
 import { Task } from "../models/task.js";
+import { User } from '../models/user.js';
 import { sendJsonResponse } from "../common/functions.js";
 
 class TaskController {
@@ -43,19 +44,37 @@ class TaskController {
 	 */
 	static add_new_task = (req, res, next) => {
 
+		
 		// TODO: Validate user & append user ID to task
-		const { body, method } = req;
-	
-		if (body && method === "POST") {
-			const task = new Task(req.body);
-			task.save()
-				.then((result) => {
-					return sendJsonResponse( req, res, next, 200, result, "task saved" );
-				})
-				.catch((error) => {
-					console.log(error);
-					return sendJsonResponse( req, res, next, 500, "", "Cannot add task" );
-				});
+		const { body } = req;
+		const { sub, email } = req.auth;
+
+		
+		if (body) {
+			// Check if user's account is active.
+			
+			User.findById(sub).select('email status')
+			.then(result => {
+				if (result) {
+					if( result.status === 'active' && email === result.email ){
+						const task = new Task(req.body);
+						task.userId = sub;
+						task.save()
+							.then((result) => {
+								return sendJsonResponse( req, res, next, 200, result, "task saved" );
+							})
+							.catch((error) => {
+								console.log(error);
+								return sendJsonResponse( req, res, next, 500, "", "Cannot add task" );
+							});
+					}
+				}
+			})
+			.catch(error => {
+				console.log(error);
+				return sendJsonResponse( req, res, next, 500, "", "Cannot add task" );
+			})
+
 		} else {
 			if (method != "POST") {
 				return sendJsonResponse( req, res, next, 405, "", "method not allowed" );
