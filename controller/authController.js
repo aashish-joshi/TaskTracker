@@ -105,19 +105,20 @@ class AuthController {
 					if (matchPassword(existingUser.password, password)) {
 						const token = jwt.sign(
 							{
-								id: existingUser._id,
+								sub: existingUser._id,
 								email: existingUser.email,
-								issuer: "api.tasktracker",
+								iss: process.env.JWT_ISS,
+								aud: process.env.JWT_AUD
 							},
 							process.env.JWT_SECRET,
-							{ expiresIn: "2h" }
+							{ expiresIn: process.env.JWT_EXPIRY, algorithm: process.env.JWT_ALGO }
 						);
 						return res.status(200).json({
 							status: "success",
 							data: {
 								access_token: token,
 								token_type: "Bearer",
-								expiresIn: "7200",
+								expiresIn: process.env.JWT_EXPIRY,
 							},
 							message: "access token generated",
 						});
