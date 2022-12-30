@@ -15,8 +15,9 @@ import { router as authRouter } from './routes/authRoutes.js';
 const app = Express();
 const port = process.env.PORT || 3000;
 
+// API config
 app.disable('x-powered-by');
-app.use(morgan('dev'));
+app.use(morgan('combined'));
 app.use(Express.json());
 mongoose.set('strictQuery', false);
 
