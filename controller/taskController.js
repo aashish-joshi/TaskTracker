@@ -19,8 +19,12 @@ class TaskController {
 	};
 	
 	static get_one_task = (req, res, next) => {
-		Task.findById(req.params.id, "_id userId name body status createdAt")
+		Task.find({ _id: req.params.id, userId: req.auth.sub }, "_id userId name body status createdAt")
 			.then((result) => {
+				if(result.length === 0){
+					// No result
+					return sendJsonResponse( req, res, next, 404, "", "task not found" );
+				}
 				return sendJsonResponse( req, res, next, 200, result, "task" );
 			})
 			.catch((error) => {
@@ -39,7 +43,6 @@ class TaskController {
 	 */
 	static add_new_task = (req, res, next) => {
 
-		// TODO: Check & verify token in auth header.
 		// TODO: Validate user & append user ID to task
 		const { body, method } = req;
 	
