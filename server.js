@@ -39,13 +39,7 @@ app.use(function (err, req, res, next) {
     res.status(401).json({
       status: "failed",
       data:"",
-      message: "invalid token",
-      links: [
-        {
-          type: 'auth',
-          link: '/auth/token'
-        }
-      ]
+      message: "invalid token"
     });
   } else {
     next(err);
