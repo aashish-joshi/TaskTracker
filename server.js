@@ -26,7 +26,7 @@ app.get('/', (req, res, next) => {
   sendJsonResponse(req, res, next, 200, "", "Welcome to Task Tracker.")
 })
 
-app.use('/task',expressjwt({ secret: process.env.JWT_SECRET, algorithms: [process.env.JWT_ALGO]}), taskRouter);
+app.use('/task', expressjwt({ secret: process.env.JWT_SECRET, algorithms: [process.env.JWT_ALGO]}), taskRouter);
 app.use('/tasks', (req, res) => {
   res.redirect(301, '/task');
 })
@@ -42,7 +42,12 @@ app.use(function (err, req, res, next) {
       message: "invalid token"
     });
   } else {
-    next(err);
+    console.log(err.name);
+    res.status(500).json({
+      status: "failed",
+      data:"",
+      message: "something went wrong"
+    });
   }
 });
 
