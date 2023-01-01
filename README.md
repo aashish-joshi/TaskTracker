@@ -1,26 +1,43 @@
 # TaskTracker API
 
-A simple task tracker API.
+API definition for the TaskTracker project.
+
+The TaskTracker is part of a personal project to showcase a basic CRUD application. The API using NodeJS, ExpressJS and MongoDB stack. 
+
+Registered users can authenticate API requests a JWT token requested by supplying their username and password in the API.
 
 ## Functions
-1. Add new task
-2. View all open tasks
-3. View or update a task (mark complete, update text, etc)
-4. Delete task
-5. Login
-6. Signup
 
-## API
+### Available
 
-List of API endpoints. All of these exist at `{hostname}/api/{endpoint}`
+The following functions are currently supported by the API.
+
+- Generate JWT
+- Add new task
+- View all open tasks
+- View one task
+- Update one task
+- Delete one task
+
+### To do
+
+I hope to add the following functions to the API.
+
+- Update tasks in bulk
+- Delete tasks in bulk
+
+
+## Endpoints
+
+List of API endpoints.
 
 | Endpoint | Methods allowed | Description |
 | ---------|-----------------|-------------|
 | `/task` | `POST`, `GET` | Add new task (POST) or get all open tasks (GET) |
 | `/task/{id}` | `GET`, `PUT`, `DELETE` | Get, update or  delete a specific task|
 | `/auth/token` | `POST` | Generate a token |
-| `/auth/signup` | `POST` | Sign up for a new account |
-| `/auth/signout` | `POST` | Invalidate issued tokens |
+
+> All `/task` endpoints require an Authorization header with a JWT issued using `/auth/token`.
 
 ## Schema
 
