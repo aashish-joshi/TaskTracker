@@ -11,4 +11,5 @@ router.post('/', TaskController.add_new_task);
 
 router.get('/:id', TaskController.get_one_task);
 router.put('/:task_id', TaskController.update_task);
+router.delete('/:task_id', TaskController.delete_task)
 export {router};

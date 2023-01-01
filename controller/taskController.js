@@ -5,6 +5,14 @@ import { sendJsonResponse } from "../common/functions.js";
 const status_list = ['new', 'done'];
 
 class TaskController {
+
+	/**
+	 * Get a list of all tasks for a user
+	 * @param {*} req 
+	 * @param {*} res 
+	 * @param {*} next 
+	 * @returns 
+	 */
 	static get_all_tasks = (req, res, next) => {
 
 		const { sub, email } = req.auth;
@@ -13,8 +21,6 @@ class TaskController {
 
 		if(status_list.indexOf(status) !== -1){
 			query.status = status;
-		}else{
-			return sendJsonResponse( req, res, next, 400, "", "Unknown status value" );
 		}
 
 		Task.find( query )
@@ -29,8 +35,14 @@ class TaskController {
 			});
 	};
 	
+	/**
+	 * Get one task.
+	 * @param {*} req 
+	 * @param {*} res 
+	 * @param {*} next 
+	 */
 	static get_one_task = (req, res, next) => {
-		Task.find({ _id: req.params.id, userId: req.auth.sub }, "_id userId name body status createdAt")
+		Task.find({ _id: req.params.id, userId: req.auth.sub }, "_id userId name body status createdAt updatedAt")
 			.then((result) => {
 				if(result.length === 0){
 					// No result
@@ -107,12 +119,17 @@ class TaskController {
 
 		const user = await User.findById(sub).select('email status');
 
+		// if the body is undefined, return error.
+		if (!name || !body || !status){
+			return sendJsonResponse( req, res, next, 400, "", "incomplete or missing request body" );
+		}
+
 		if(user){
 			if( user.status === 'active' && email === user.email ){
 				let updated = false;
 				try{
 					const task = await Task.find({ _id: task_id, userId: req.auth.sub });
-					console.log(task);
+					//console.log(task);
 
 					// Check & Update
 					if (name.length !== 0){
@@ -146,7 +163,29 @@ class TaskController {
 				}
 			}
 		}
-	}
+	};
+
+	static delete_task = async (req, res, next) => {
+		const task_id = req.params.task_id;
+		const { sub, email } = req.auth;
+
+		const user = await User.findById(sub).select('email status');
+
+		if(user){
+			if( user.status === 'active' && email === user.email ){
+
+				try {
+					await Task.deleteOne({ _id: task_id, userId: sub });
+					return sendJsonResponse( req, res, next, 200, "", `Task ${task_id} deleted` );
+
+				} catch (error) {
+					console.log(error);
+					return sendJsonResponse( req, res, next, 500, "", "Cannot delete task" );
+				}
+				
+			}
+		}
+	};
 }
 
 export { TaskController };
