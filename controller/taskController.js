@@ -42,7 +42,7 @@ class TaskController {
 	 * @param {*} next 
 	 */
 	static get_one_task = (req, res, next) => {
-		Task.find({ _id: req.params.id, userId: req.auth.sub }, "_id userId name body status createdAt")
+		Task.find({ _id: req.params.id, userId: req.auth.sub }, "_id userId name body status createdAt updatedAt")
 			.then((result) => {
 				if(result.length === 0){
 					// No result
