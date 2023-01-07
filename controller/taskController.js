@@ -68,33 +68,48 @@ class TaskController {
 
 		const { body } = req;
 		const { sub, email } = req.auth;
+		const errorResponse = {
+			status: 0,
+			message: 'Cannot add task',
+			data: ''
+		}
+
+		// Check if body is properly defined.
+
+		const [a, b] = Object.keys(body);
 
 		
 		if (body) {
 			// Check if user's account is active.
-			
 			User.findById(sub).select('email status')
 			.then(result => {
-				if (result) {
-					if( result.status === 'active' && email === result.email ){
-						const task = new Task(req.body);
-						task.userId = sub;
-						task.save()
-							.then((result) => {
-								return sendJsonResponse( req, res, next, 200, result, "task saved" );
-							})
-							.catch((error) => {
-								console.log(error);
-								return sendJsonResponse( req, res, next, 500, "", "Cannot add task" );
-							});
-					}
-					return sendJsonResponse(req, res, next, 500, "", "Insufficient permission")
+
+				if( result.status === 'active' && email === result.email ){
+					const { name, body } = req.body
+					
+					const task = new Task(req.body);
+					task.userId = sub;
+					task.save()
+						.then((r) => {
+							return sendJsonResponse( req, res, next, 200, r, "task saved" );
+						})
+						.catch((error) => {
+							console.log(error);
+							next(error);
+						});
+				}else{
+					console.log();
+					errorResponse.status = 401;
+					errorResponse.message = "You are not authorized to add tasks."
 				}
 			})
 			.catch(error => {
 				console.log(error);
-				return sendJsonResponse( req, res, next, 500, "", "Cannot add task" );
-			})
+			});
+
+			if(errorResponse.status !== 0){
+				return sendJsonResponse( req, res, next, errorResponse.status, errorResponse.data, errorResponse.message );
+			}
 
 		} else {
 			if (method != "POST") {
@@ -175,8 +190,13 @@ class TaskController {
 			if( user.status === 'active' && email === user.email ){
 
 				try {
-					await Task.deleteOne({ _id: task_id, userId: sub });
-					return sendJsonResponse( req, res, next, 200, "", `Task ${task_id} deleted` );
+					const taskExists = await Task.find({ _id: req.params.id, userId: req.auth.sub }, "_id userId")
+					if (taskExists){
+						await Task.deleteOne({ _id: task_id, userId: sub });
+						return sendJsonResponse( req, res, next, 200, "", `Task ${task_id} deleted` );
+					}else{
+						return sendJsonResponse( req, res, next, 404, "", `Cannot find task ${task_id}` );
+					}
 
 				} catch (error) {
 					console.log(error);

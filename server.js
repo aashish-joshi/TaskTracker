@@ -6,6 +6,7 @@ import mongoose from 'mongoose';
 import morgan from 'morgan';
 import { sendJsonResponse } from './common/functions.js';
 import { expressjwt } from "express-jwt";
+import cors from 'cors';
 
 // Routes
 import { router as taskRouter } from './routes/taskRoutes.js';
@@ -20,6 +21,7 @@ app.disable('x-powered-by');
 app.use(morgan('combined'));
 app.use(Express.json());
 mongoose.set('strictQuery', false);
+app.use(cors());
 
 // Configure routes
 app.get('/', (req, res, next) => {
@@ -27,9 +29,9 @@ app.get('/', (req, res, next) => {
 })
 
 app.use('/task', expressjwt({ secret: process.env.JWT_SECRET, algorithms: [process.env.JWT_ALGO]}), taskRouter);
-app.use('/tasks', (req, res) => {
-  res.redirect(301, '/task');
-})
+// app.use('/tasks', (req, res) => {
+//   res.redirect(301, '/task');
+// });
 app.use('/auth', authRouter);
 
 // Error handling
