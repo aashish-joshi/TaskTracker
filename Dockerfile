@@ -15,5 +15,5 @@ RUN npm ci
 # Bundle app source
 COPY . .
 
-EXPOSE 3000
+EXPOSE 9276
 CMD [ "node", "server.js" ]
