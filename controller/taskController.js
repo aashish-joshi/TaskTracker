@@ -1,8 +1,7 @@
 import {Task} from '../models/task.js';
 import {User} from '../models/user.js';
 import {sendJsonResponse} from '../common/functions.js';
-
-const statusList = ['new', 'done'];
+import {statusList} from '../common/constants.js';
 
 // eslint-disable-next-line require-jsdoc
 class TaskController {
