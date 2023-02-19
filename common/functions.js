@@ -44,7 +44,7 @@ export async function matchPassword(hashed, plain) {
  * @param {*} data The data to be sent in the response.
  * @param {*} message Message to be included in the response.
  */
-export function sendJsonResponse(req, res, next, status, data, message) {
+export function sendJsonResponse(req, res, next, status, data, message, links=[]) {
   const json = {};
 
   json.message = message;
@@ -56,6 +56,6 @@ export function sendJsonResponse(req, res, next, status, data, message) {
     json.status = 'success';
   }
 
-  res.status(status).json(json);
+  res.status(status).json(json, links);
 
 }

@@ -7,6 +7,7 @@ import morgan from 'morgan';
 import {sendJsonResponse} from './common/functions.js';
 import {expressjwt} from 'express-jwt';
 import cors from 'cors';
+import hateoasLinker from 'express-hateoas-links';
 
 // Routes
 import {router as taskRouter} from './routes/taskRoutes.js';
@@ -22,10 +23,15 @@ app.use(morgan('combined'));
 app.use(express.json());
 mongoose.set('strictQuery', false);
 app.use(cors());
+app.use(hateoasLinker);
 
 // Configure routes
 app.get('/', (req, res, next) => {
-  sendJsonResponse(req, res, next, 200, '', 'Welcome to Task Tracker.');
+  sendJsonResponse(req, res, next, 200, '', 'Welcome to Task Tracker.', [
+    {rel: 'self', method: 'GET', href:"/"},
+    {rel: 'create-account', method: 'POST', href:"/auth/signup"},
+    {rel: 'create-token', method: 'POST', href:"/auth/token"},
+  ]);
 });
 
 app.use(
