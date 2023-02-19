@@ -60,13 +60,29 @@ class AuthController {
     });
 
     if (result) {
+      const {_id, fname, lname, email, status } = result
       return sendJsonResponse(
           req,
           res,
           next,
           201,
-          result,
+          {
+            id: _id,
+            fname: fname,
+            lname: lname,
+            email: email,
+            status: status
+          },
           'signup complete',
+          [
+            {rel: 'self', method: 'GET', href:"/auth/signup"},
+            {rel: 'create-token', method: 'POST', href:"/auth/token"},
+            {rel: 'task-add', method: 'POST', href:"/task/"},
+            {rel: 'task-list-all', method: 'GET', href:"/task"},
+            {rel: 'task-list-one', method: 'GET', href:"/task/{id}"},
+            {rel: 'task-update', method: 'PUT', href:"/task/{id}"},
+            {rel: 'task-delete', method: 'DELETE', href:"/task/{id}"},
+          ]
       );
     }
   };
