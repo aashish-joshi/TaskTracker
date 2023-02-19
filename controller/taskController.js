@@ -1,211 +1,308 @@
-import { Task } from "../models/task.js";
-import { User } from '../models/user.js';
-import { sendJsonResponse } from "../common/functions.js";
+import {Task} from '../models/task.js';
+import {User} from '../models/user.js';
+import {sendJsonResponse} from '../common/functions.js';
+import {statusList} from '../common/constants.js';
 
-const status_list = ['new', 'done'];
-
+// eslint-disable-next-line require-jsdoc
 class TaskController {
+  /**
+   * Get a list of all tasks for a user
+   * @param {*} req
+   * @param {*} res
+   * @param {*} next
+   */
+  static get_all_tasks = (req, res, next) => {
+    const {sub, email} = req.auth;
+    const {status} = req.query;
+    const query = {
+      userId: sub
+    };
 
-	/**
-	 * Get a list of all tasks for a user
-	 * @param {*} req 
-	 * @param {*} res 
-	 * @param {*} next 
-	 * @returns 
-	 */
-	static get_all_tasks = (req, res, next) => {
+    if (statusList.indexOf(status) !== -1) {
+      query.status = status;
+    }
 
-		const { sub, email } = req.auth;
-		const { status } = req.query;
-		const query = {"userId": sub};
+    Task.find(query)
+        .select('_id userId name body status createdAt')
+        .sort({createdAt: -1})
+        .then((result) => {
+          return sendJsonResponse(
+              req,
+              res,
+              next,
+              200,
+              result,
+              'task list',
+          );
+        })
+        .catch((error) => {
+          console.log(error);
+          return sendJsonResponse(
+              req,
+              res,
+              next,
+              500,
+              '',
+              'Cannot get data from database',
+          );
+        });
+  };
 
-		if(status_list.indexOf(status) !== -1){
-			query.status = status;
-		}
+  /**
+   * Get one task.
+   * @param {*} req
+   * @param {*} res
+   * @param {*} next
+   */
+  static get_one_task = (req, res, next) => {
+    Task.find(
+        {_id: req.params.id, userId: req.auth.sub},
+        '_id userId name body status createdAt updatedAt',
+    )
+        .then((result) => {
+          if (result.length === 0) {
+            // No result
+            return sendJsonResponse(
+                req,
+                res,
+                next,
+                404,
+                '',
+                'task not found',
+            );
+          }
+          return sendJsonResponse(req, res, next, 200, result, 'task');
+        })
+        .catch((error) => {
+          console.log(error);
+          return sendJsonResponse(
+              req,
+              res,
+              next,
+              500,
+              '',
+              'Cannot get data from database',
+          );
+        });
+  };
 
-		Task.find( query )
-			.select("_id userId name body status createdAt")
-			.sort({ createdAt: -1 })
-			.then((result) => {
-				return sendJsonResponse(req, res, next, 200, result, "task list");
-			})
-			.catch((error) => {
-				console.log(error);
-				return sendJsonResponse( req, res, next, 500, "", "Cannot get data from database" );
-			});
-	};
-	
-	/**
-	 * Get one task.
-	 * @param {*} req 
-	 * @param {*} res 
-	 * @param {*} next 
-	 */
-	static get_one_task = (req, res, next) => {
-		Task.find({ _id: req.params.id, userId: req.auth.sub }, "_id userId name body status createdAt updatedAt")
-			.then((result) => {
-				if(result.length === 0){
-					// No result
-					return sendJsonResponse( req, res, next, 404, "", "task not found" );
-				}
-				return sendJsonResponse( req, res, next, 200, result, "task" );
-			})
-			.catch((error) => {
-				console.log(error);
-				return sendJsonResponse( req, res, next, 500, "", "Cannot get data from database" );
-			});
-	};
-	
-	/**
-	 * Add a new task to the database.
-	 * 
-	 * @param {*} req 
-	 * @param {*} res 
-	 * @param {*} next 
-	 * @returns 
-	 */
-	static add_new_task = (req, res, next) => {
+  /**
+   * Add a new task to the database.
+   *
+   * @param {*} req
+   * @param {*} res
+   * @param {*} next
+   * @return {*}
+   */
+  static add_new_task = (req, res, next) => {
+    const {body} = req;
+    const {sub, email} = req.auth;
+    const errorResponse = {
+      status: 0,
+      message: 'Cannot add task',
+      data: '',
+    };
 
-		const { body } = req;
-		const { sub, email } = req.auth;
-		const errorResponse = {
-			status: 0,
-			message: 'Cannot add task',
-			data: ''
-		}
+    // Check if body is properly defined.
 
-		// Check if body is properly defined.
+    if (body) {
+      // Check if user's account is active.
+      User.findById(sub)
+          .select('email status')
+          .then((result) => {
+            if (result.status === 'active' && email === result.email) {
+              // const {name, body} = req.body;
 
-		const [a, b] = Object.keys(body);
+              const task = new Task(req.body);
+              task.userId = sub;
+              task.save()
+                  .then((r) => {
+                    return sendJsonResponse(
+                        req,
+                        res,
+                        next,
+                        200,
+                        r,
+                        'task saved',
+                    );
+                  })
+                  .catch((error) => {
+                    console.log(error);
+                    next(error);
+                  });
+            } else {
+              console.log();
+              errorResponse.status = 401;
+              errorResponse.message =
+              'You are not authorized to add tasks.';
+            }
+          })
+          .catch((error) => {
+            console.log(error);
+          });
 
-		
-		if (body) {
-			// Check if user's account is active.
-			User.findById(sub).select('email status')
-			.then(result => {
+      if (errorResponse.status !== 0) {
+        return sendJsonResponse(
+            req,
+            res,
+            next,
+            errorResponse.status,
+            errorResponse.data,
+            errorResponse.message,
+        );
+      }
+    } else {
+      if (method != 'POST') {
+        return sendJsonResponse(
+            req,
+            res,
+            next,
+            405,
+            '',
+            'method not allowed',
+        );
+      }
+      return sendJsonResponse(req, res, next, 400, '', 'bad request');
+    }
+  };
 
-				if( result.status === 'active' && email === result.email ){
-					const { name, body } = req.body
-					
-					const task = new Task(req.body);
-					task.userId = sub;
-					task.save()
-						.then((r) => {
-							return sendJsonResponse( req, res, next, 200, r, "task saved" );
-						})
-						.catch((error) => {
-							console.log(error);
-							next(error);
-						});
-				}else{
-					console.log();
-					errorResponse.status = 401;
-					errorResponse.message = "You are not authorized to add tasks."
-				}
-			})
-			.catch(error => {
-				console.log(error);
-			});
+  /**
+   * Update an existing task
+   *
+   * @param {*} req
+   * @param {*} res
+   * @param {*} next
+   */
+  static update_task = async (req, res, next) => {
+    const taskId = req.params.task_id;
+    const {name, body, status} = req.body;
+    const {sub, email} = req.auth;
 
-			if(errorResponse.status !== 0){
-				return sendJsonResponse( req, res, next, errorResponse.status, errorResponse.data, errorResponse.message );
-			}
+    const user = await User.findById(sub).select('email status');
 
-		} else {
-			if (method != "POST") {
-				return sendJsonResponse( req, res, next, 405, "", "method not allowed" );
-			}
-			return sendJsonResponse( req, res, next, 400, "", "bad request" );
-		}
-	};
+    // if the body is undefined, return error.
+    if (!name || !body || !status) {
+      return sendJsonResponse(
+          req,
+          res,
+          next,
+          400,
+          '',
+          'incomplete or missing request body',
+      );
+    }
 
-	/**
-	 * Update an existing task
-	 * 
-	 * @param {*} req 
-	 * @param {*} res 
-	 * @param {*} next 
-	 */
-	static update_task = async (req, res, next) => {
+    if (user) {
+      if (user.status === 'active' && email === user.email) {
+        let updated = false;
+        try {
+          const task = await Task.find({
+            _id: taskId,
+            userId: req.auth.sub,
+          });
+          // console.log(task);
 
-		const task_id = req.params.task_id;
-		const { name, body, status } = req.body;
-		const { sub, email } = req.auth;
+          // Check & Update
+          if (name.length !== 0) {
+            task[0].name = name;
+            updated = true;
+          }
+          // TODO: Fetch task status from DB
+          if (statusList.indexOf(status) !== -1) {
+            task[0].status = status;
+            updated = true;
+          }
 
-		const user = await User.findById(sub).select('email status');
+          // Update Task
+          if (body.length !== 0) {
+            task[0].body = body;
+            updated = true;
+          }
 
-		// if the body is undefined, return error.
-		if (!name || !body || !status){
-			return sendJsonResponse( req, res, next, 400, "", "incomplete or missing request body" );
-		}
+          const save = await task[0].save();
 
-		if(user){
-			if( user.status === 'active' && email === user.email ){
-				let updated = false;
-				try{
-					const task = await Task.find({ _id: task_id, userId: req.auth.sub });
-					//console.log(task);
+          // Send response
+          if (updated) {
+            return sendJsonResponse(
+                req,
+                res,
+                next,
+                200,
+                save,
+                'task saved',
+            );
+          } else {
+            return sendJsonResponse(
+                req,
+                res,
+                next,
+                400,
+                '',
+                'No changes made to task',
+            );
+          }
+        } catch (error) {
+          console.log(error);
+          return sendJsonResponse(
+              req,
+              res,
+              next,
+              500,
+              '',
+              'Cannot update task',
+          );
+        }
+      }
+    }
+  };
 
-					// Check & Update
-					if (name.length !== 0){
-						task[0].name = name;
-						updated = true;
-					}
-					// TODO: Fetch task status from DB
-					if (status_list.indexOf(status) !== -1){
-						task[0].status = status;
-						updated = true;
-					}
+  static delete_task = async (req, res, next) => {
+    const taskId = req.params.task_id;
+    const {sub, email} = req.auth;
 
-					// Update Task
-					if(body.length !== 0){
-						task[0].body = body;
-						updated = true;
-					}
-					
-					const save = await task[0].save();
+    const user = await User.findById(sub).select('email status');
 
-					// Send response
-					if(updated){
-						return sendJsonResponse( req, res, next, 200, save, "task saved" );
-					}else{
-						return sendJsonResponse( req, res, next, 400, "", "No changes made to task" );
-					}
-
-				} catch (error){
-					console.log(error);
-					return sendJsonResponse( req, res, next, 500, "", "Cannot update task" );
-				}
-			}
-		}
-	};
-
-	static delete_task = async (req, res, next) => {
-		const task_id = req.params.task_id;
-		const { sub, email } = req.auth;
-
-		const user = await User.findById(sub).select('email status');
-
-		if(user){
-			if( user.status === 'active' && email === user.email ){
-
-				try {
-					const taskExists = await Task.find({ _id: req.params.id, userId: req.auth.sub }, "_id userId")
-					if (taskExists){
-						await Task.deleteOne({ _id: task_id, userId: sub });
-						return sendJsonResponse( req, res, next, 200, "", `Task ${task_id} deleted` );
-					}else{
-						return sendJsonResponse( req, res, next, 404, "", `Cannot find task ${task_id}` );
-					}
-
-				} catch (error) {
-					console.log(error);
-					return sendJsonResponse( req, res, next, 500, "", "Cannot delete task" );
-				}
-				
-			}
-		}
-	};
+    if (user) {
+      if (user.status === 'active' && email === user.email) {
+        try {
+          const taskExists = await Task.find(
+              {_id: req.params.id, userId: req.auth.sub},
+              '_id userId',
+          );
+          if (taskExists) {
+            await Task.deleteOne({_id: taskId, userId: sub});
+            return sendJsonResponse(
+                req,
+                res,
+                next,
+                200,
+                '',
+                `Task ${taskId} deleted`,
+            );
+          } else {
+            return sendJsonResponse(
+                req,
+                res,
+                next,
+                404,
+                '',
+                `Cannot find task ${taskId}`,
+            );
+          }
+        } catch (error) {
+          console.log(error);
+          return sendJsonResponse(
+              req,
+              res,
+              next,
+              500,
+              '',
+              'Cannot delete task',
+          );
+        }
+      }
+    }
+  };
 }
 
-export { TaskController };
+export {TaskController};
