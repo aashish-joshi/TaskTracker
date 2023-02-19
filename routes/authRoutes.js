@@ -12,7 +12,7 @@ router.get('/token', (req, res, next) => {
 })
 
 
-//router.post('/signup', AuthController.signup);
+router.post('/signup', AuthController.signup);
 router.post('/token', AuthController.get_token);
 
 export { router };
