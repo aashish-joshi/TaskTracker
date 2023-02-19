@@ -14,7 +14,7 @@ import {router as authRouter} from './routes/authRoutes.js';
 
 // Main API app
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT;
 
 // API config
 app.disable('x-powered-by');
