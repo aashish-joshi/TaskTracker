@@ -2,6 +2,7 @@ import * as dotenv from "dotenv";
 dotenv.config();
 
 import bcrypt from "bcrypt";
+import sgMail from '@sendgrid/mail';
 
 /**
  *
@@ -58,4 +59,31 @@ export function sendJsonResponse(req, res, next, status, data, message, links=[]
 
   res.status(status).json(json, links);
 
+}
+
+export async function sendEmail(message){
+
+  sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+
+  const msg = {
+    to: message.to, // Change to your recipient
+    from: message.from, // Change to your verified sender
+    templateId: 'd-94373015d007403f96561bf6d26238ef',
+    dynamicTemplateData: {
+      first_name: message.name,
+      email: message.to,
+      Sender_email: message.from
+    }
+  }
+
+  try {
+    await sgMail.send(msg);
+  } catch (error) {
+
+    if (error.response) {
+      console.error(error.response);
+      return error.response;
+    }
+  }
+  return true;
 }

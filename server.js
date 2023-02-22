@@ -4,7 +4,7 @@ dotenv.config();
 import express from 'express';
 import mongoose from 'mongoose';
 import morgan from 'morgan';
-import {sendJsonResponse} from './common/functions.js';
+import {sendJsonResponse, sendEmail} from './common/functions.js';
 import {expressjwt} from 'express-jwt';
 import cors from 'cors';
 import hateoasLinker from 'express-hateoas-links';
@@ -33,6 +33,21 @@ app.get('/', (req, res, next) => {
     {rel: 'create-token', method: 'POST', href:"/auth/token"},
   ]);
 });
+
+app.get('/send-mail', async (req, res, next) => {
+  const {to, from, name} = req.query
+  const resp = await sendEmail({
+    to: to,
+    from: from,
+    name: name
+  });
+  console.log(`resp = ${resp}`)
+  if(resp === true){
+    sendJsonResponse(req, res, next, 200, '', 'Email sent')
+  }else{
+    sendJsonResponse(req, res, next, 500, '', resp)
+  }
+})
 
 app.use(
     '/task',
