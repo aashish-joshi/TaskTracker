@@ -15,7 +15,7 @@ const notificationSchema = new Schema(
 		from: {
 			type: String,
 			default: "aashish@aashishjoshi.co.in",
-		}
+		},
 	},
 	{ timestamps: true }
 );
