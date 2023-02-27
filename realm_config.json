@@ -1,9 +1,0 @@
-{
-    "app_id": "task-api-rlpnj",
-    "config_version": 20210101,
-    "name": "task-api",
-    "location": "IN-MB",
-    "provider_region": "aws-ap-south-1",
-    "deployment_model": "LOCAL",
-    "environment": "development"
-}
