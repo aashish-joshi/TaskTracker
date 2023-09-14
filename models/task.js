@@ -1,11 +1,11 @@
-import { ObjectID } from "bson";
-import mongoose from "mongoose";
+import { ObjectId } from 'bson';
+import mongoose from 'mongoose';
 const { Schema } = mongoose;
 
 const taskSchema = new Schema(
 	{
 		userId: {
-			type: ObjectID,
+			type: ObjectId,
 			required: true,
 		},
 		name: {
@@ -18,7 +18,7 @@ const taskSchema = new Schema(
 		},
 		status: {
 			type: String,
-			default: "new",
+			default: 'new',
 		},
 		due: {
 			type: Date,
@@ -27,4 +27,4 @@ const taskSchema = new Schema(
 	{ timestamps: true }
 );
 
-export const Task = mongoose.model("Task", taskSchema);
+export const Task = mongoose.model('Task', taskSchema);
