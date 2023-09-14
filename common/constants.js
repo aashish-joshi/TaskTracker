@@ -1,1 +1,1 @@
-export const statusList = ['new', 'done'];
+export const statusList = ['new', 'in_progress', 'done', 'cancelled'];

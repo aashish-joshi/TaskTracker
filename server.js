@@ -28,9 +28,9 @@ app.use(hateoasLinker);
 // Configure routes
 app.get('/', (req, res, next) => {
   sendJsonResponse(req, res, next, 200, '', 'Welcome to Task Tracker.', [
-    {rel: 'self', method: 'GET', href:"/"},
-    {rel: 'create-account', method: 'POST', href:"/auth/signup"},
-    {rel: 'create-token', method: 'POST', href:"/auth/token"},
+    {rel: 'self', method: 'GET', href: '/'},
+    {rel: 'create-account', method: 'POST', href: '/auth/signup'},
+    {rel: 'create-token', method: 'POST', href: '/auth/token'},
   ]);
 });
 
