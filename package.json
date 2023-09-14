@@ -1,14 +1,14 @@
 {
   "name": "tasktracker",
-  "version": "1.0.0",
-  "description": "intuitive task tracker",
+  "version": "1.0.1",
+  "description": "intuitive task tracker backend API",
   "main": "server.js",
   "type": "module",
   "scripts": {
     "start": "node server.js",
     "dev": "npx nodemon server.js"
   },
-  "author": "aashish",
+  "author": "aashish-joshi",
   "license": "ISC",
   "dependencies": {
     "bcrypt": "^5.1.0",
