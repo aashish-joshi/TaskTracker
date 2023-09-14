@@ -181,14 +181,14 @@ class TaskController {
     const user = await User.findById(sub).select('email status');
 
     // if the body is undefined, return error.
-    if (!name || !body || !status) {
+    if (!name && !body && !status) {
       return sendJsonResponse(
           req,
           res,
           next,
           400,
           '',
-          'incomplete or missing request body',
+          'missing request body',
       );
     }
 
@@ -203,18 +203,18 @@ class TaskController {
           // console.log(task);
 
           // Check & Update
-          if (name.length !== 0) {
+          if (name && name.length !== 0) {
             task[0].name = name;
             updated = true;
           }
           // TODO: Fetch task status from DB
-          if (statusList.indexOf(status) !== -1) {
+          if (status && statusList.indexOf(status) !== -1) {
             task[0].status = status;
             updated = true;
           }
 
           // Update Task
-          if (body.length !== 0) {
+          if (body && body.length !== 0) {
             task[0].body = body;
             updated = true;
           }
