@@ -2,6 +2,7 @@ import * as dotenv from "dotenv";
 dotenv.config();
 
 import bcrypt from "bcrypt";
+import sgMail from "@sendgrid/mail";
 
 /**
  *
@@ -26,11 +27,11 @@ export function isEmail(email) {
  * @returns Hashed string.
  */
 export async function hashPassword(password) {
-    return await bcrypt.hash(password, Number(process.env.SALT_ROUND))
+	return await bcrypt.hash(password, Number(process.env.SALT_ROUND));
 }
 
 export async function matchPassword(hashed, plain) {
-    return await bcrypt.compare(plain, hashed);
+	return await bcrypt.compare(plain, hashed);
 	return await bcrypt.hash(password, Number(process.env.SALT_ROUND));
 }
 
@@ -44,18 +45,50 @@ export async function matchPassword(hashed, plain) {
  * @param {*} data The data to be sent in the response.
  * @param {*} message Message to be included in the response.
  */
-export function sendJsonResponse(req, res, next, status, data, message, links=[]) {
-  const json = {};
+export function sendJsonResponse(
+	req,
+	res,
+	next,
+	status,
+	data,
+	message,
+	links = []
+) {
+	const json = {};
 
-  json.message = message;
-  json.data = data;
-  
-  if (status >= 400){
-    json.status = 'failed';
-  }else{
-    json.status = 'success';
-  }
+	json.message = message;
+	json.data = data;
 
-  res.status(status).json(json, links);
+	if (status >= 400) {
+		json.status = "failed";
+	} else {
+		json.status = "success";
+	}
 
+	res.status(status).json(json, links);
+}
+
+export async function sendEmail(message) {
+	sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+
+	const msg = {
+		to: message.to, // Change to your recipient
+		from: message.from, // Change to your verified sender
+		templateId: "d-94373015d007403f96561bf6d26238ef",
+		dynamicTemplateData: {
+			first_name: message.name,
+			email: message.to,
+			Sender_email: message.from,
+		},
+	};
+
+	try {
+		await sgMail.send(msg);
+	} catch (error) {
+		if (error.response) {
+			console.error(error.response);
+			return error.response;
+		}
+	}
+	return true;
 }
