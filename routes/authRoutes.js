@@ -14,6 +14,5 @@ router.get('/token', (req, res, next) => {
 
 router.post('/signup', AuthController.signup);
 router.post('/token/new', AuthController.get_token);
-router.post('/token/refresh', AuthController.refresh_token);
 
 export {router};
