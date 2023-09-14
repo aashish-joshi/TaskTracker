@@ -32,27 +32,13 @@ app.use(cors(corsOptions));
 app.use(hateoasLinker);
 
 // Configure routes
-app.get("/", (req, res, next) => {
-	sendJsonResponse(req, res, next, 200, "", "Welcome to Task Tracker.", [
-		{ rel: "self", method: "GET", href: "/" },
-		{ rel: "create-account", method: "POST", href: "/auth/signup" },
-		{ rel: "create-token", method: "POST", href: "/auth/token" },
-	]);
-});
 
-app.get("/send-mail", async (req, res, next) => {
-	const { to, from, name } = req.query;
-	const resp = await sendEmail({
-		to: to,
-		from: from,
-		name: name,
-	});
-	console.log(`resp = ${resp}`);
-	if (resp === true) {
-		sendJsonResponse(req, res, next, 200, "", "Email sent");
-	} else {
-		sendJsonResponse(req, res, next, 500, "", resp);
-	}
+app.get('/', (req, res, next) => {
+  sendJsonResponse(req, res, next, 200, '', 'Welcome to Task Tracker.', [
+    {rel: 'self', method: 'GET', href: '/'},
+    {rel: 'create-account', method: 'POST', href: '/auth/signup'},
+    {rel: 'create-token', method: 'POST', href: '/auth/token'},
+  ]);
 });
 
 app.use(
