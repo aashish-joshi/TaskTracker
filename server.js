@@ -6,7 +6,7 @@ import mongoose from 'mongoose';
 import morgan from 'morgan';
 import {sendJsonResponse, sendEmail} from './common/functions.js';
 import {expressjwt} from 'express-jwt';
-// import cors from 'cors';
+import {rateLimit} from 'express-rate-limit';
 import hateoasLinker from 'express-hateoas-links';
 
 // Routes
@@ -23,12 +23,22 @@ app.use(morgan('combined'));
 app.use(express.json());
 mongoose.set('strictQuery', false);
 
-// const corsOptions = {
-//   origin: process.env.BASE_URI,
-//   optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
-// };
+const rateLimitTime = process.env.RATE_LIMIT_TIME || 15;
+const rateLimitHits = process.env.RATE_LIMIT_HITS || 25;
 
-// app.use(cors(corsOptions));
+const limiter = rateLimit({
+  windowMs: rateLimitTime * 60 * 1000, // 15 minutes
+  limit: rateLimitHits,
+  standardHeaders: 'draft-7',
+  legacyHeaders: false,
+  message: {
+    status: 'failed',
+    data: '',
+    message: 'Too many requests, please try again later.',
+  },
+});
+
+app.use(limiter);
 app.use(hateoasLinker);
 
 // Configure routes
