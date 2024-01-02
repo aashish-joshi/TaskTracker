@@ -6,7 +6,7 @@ import mongoose from 'mongoose';
 import morgan from 'morgan';
 import {sendJsonResponse, sendEmail} from './common/functions.js';
 import {expressjwt} from 'express-jwt';
-import cors from 'cors';
+// import cors from 'cors';
 import hateoasLinker from 'express-hateoas-links';
 
 // Routes
@@ -23,12 +23,12 @@ app.use(morgan('combined'));
 app.use(express.json());
 mongoose.set('strictQuery', false);
 
-const corsOptions = {
-  origin: process.env.BASE_URI,
-  optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
-};
+// const corsOptions = {
+//   origin: process.env.BASE_URI,
+//   optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
+// };
 
-app.use(cors(corsOptions));
+// app.use(cors(corsOptions));
 app.use(hateoasLinker);
 
 // Configure routes
