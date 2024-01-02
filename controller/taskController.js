@@ -174,7 +174,7 @@ class TaskController {
 	 * @param {*} next
 	 */
   static update_task = async (req, res, next) => {
-    const taskId = req.params.task_id;
+    const taskId = req.params.id;
     const {name, body, status} = req.body;
     const {sub, email} = req.auth;
 
@@ -257,7 +257,7 @@ class TaskController {
   };
 
   static delete_task = async (req, res, next) => {
-    const taskId = req.params.task_id;
+    const taskId = req.params.id;
     const {sub, email} = req.auth;
 
     const user = await User.findById(sub).select('email status');
