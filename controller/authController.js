@@ -37,7 +37,7 @@ class AuthController {
       );
     }
 
-    const existingUser = await User.findOne({email: email});
+    const existingUser = await User.findOne({email: {$eq: email}});
 
     if (existingUser) {
       return sendJsonResponse(
@@ -116,7 +116,7 @@ class AuthController {
       );
     }
     try {
-      const existingUser = await User.findOne({email: email});
+      const existingUser = await User.findOne({email: {$eq: email}});
       if (!existingUser) {
         console.log('email not found');
         return res.status(403).json({

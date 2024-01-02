@@ -15,7 +15,9 @@ class TaskController {
     const {sub, email} = req.auth;
     const {status} = req.query;
     const query = {
-      userId: sub,
+      userId: {
+        $eq: sub,
+      },
     };
 
     if (statusList.indexOf(status) !== -1) {
