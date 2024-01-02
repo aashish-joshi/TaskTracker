@@ -6,11 +6,11 @@ import {statusList} from '../common/constants.js';
 // eslint-disable-next-line require-jsdoc
 class TaskController {
   /**
-	 * Get a list of all tasks for a user
-	 * @param {*} req
-	 * @param {*} res
-	 * @param {*} next
-	 */
+   * Get a list of all tasks for a user
+   * @param {*} req
+   * @param {*} res
+   * @param {*} next
+   */
   static get_all_tasks = (req, res, next) => {
     const {sub, email} = req.auth;
     const {status} = req.query;
@@ -19,6 +19,16 @@ class TaskController {
         $eq: sub,
       },
     };
+    if (status && typeof status !== 'string') {
+      return sendJsonResponse(
+          req,
+          res,
+          next,
+          400,
+          '',
+          'bad request',
+      );
+    }
 
     if (statusList.indexOf(status) !== -1) {
       query.status = status;
@@ -51,11 +61,11 @@ class TaskController {
   };
 
   /**
-	 * Get one task.
-	 * @param {*} req
-	 * @param {*} res
-	 * @param {*} next
-	 */
+   * Get one task.
+   * @param {*} req
+   * @param {*} res
+   * @param {*} next
+   */
   static get_one_task = (req, res, next) => {
     Task.find(
         {_id: req.params.id, userId: req.auth.sub},
@@ -63,7 +73,7 @@ class TaskController {
     )
         .then((result) => {
           if (result.length === 0) {
-            // No result
+          // No result
             return sendJsonResponse(
                 req,
                 res,
@@ -89,13 +99,13 @@ class TaskController {
   };
 
   /**
-	 * Add a new task to the database.
-	 *
-	 * @param {*} req
-	 * @param {*} res
-	 * @param {*} next
-	 * @return {*}
-	 */
+   * Add a new task to the database.
+   *
+   * @param {*} req
+   * @param {*} res
+   * @param {*} next
+   * @return {*}
+   */
   static add_new_task = (req, res, next) => {
     const {body} = req;
     const {sub, email} = req.auth;
@@ -113,7 +123,7 @@ class TaskController {
           .select('email status')
           .then((result) => {
             if (result.status === 'active' && email === result.email) {
-              // const {name, body} = req.body;
+            // const {name, body} = req.body;
 
               const task = new Task(req.body);
               task.userId = sub;
@@ -136,7 +146,7 @@ class TaskController {
               console.log();
               errorResponse.status = 401;
               errorResponse.message =
-							'You are not authorized to add tasks.';
+              'You are not authorized to add tasks.';
             }
           })
           .catch((error) => {
@@ -169,12 +179,12 @@ class TaskController {
   };
 
   /**
-	 * Update an existing task
-	 *
-	 * @param {*} req
-	 * @param {*} res
-	 * @param {*} next
-	 */
+   * Update an existing task
+   *
+   * @param {*} req
+   * @param {*} res
+   * @param {*} next
+   */
   static update_task = async (req, res, next) => {
     const taskId = req.params.id;
     const {name, body, status} = req.body;
