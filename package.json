@@ -1,6 +1,6 @@
 {
   "name": "tasktracker",
-  "version": "1.0.4",
+  "version": "1.1.0",
   "description": "intuitive task tracker backend API",
   "main": "server.js",
   "type": "module",
