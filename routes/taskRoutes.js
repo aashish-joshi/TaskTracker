@@ -11,9 +11,11 @@ const router = Express.Router();
 const taskCorsConfig = corsConfig;
 taskCorsConfig.methods = 'POST, GET, PUT, DELETE';
 
+router.options('/', cors(taskCorsConfig));
 router.get('/', cors(taskCorsConfig), TaskController.get_all_tasks);
 router.post('/', cors(taskCorsConfig), TaskController.add_new_task);
+router.options('/:id', cors(taskCorsConfig));
 router.get('/:id', cors(taskCorsConfig), TaskController.get_one_task);
-router.put('/:task_id', cors(taskCorsConfig), TaskController.update_task);
-router.delete('/:task_id', cors(taskCorsConfig), TaskController.delete_task);
+router.put('/:id', cors(taskCorsConfig), TaskController.update_task);
+router.delete('/:id', cors(taskCorsConfig), TaskController.delete_task);
 export {router};
